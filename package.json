@@ -24,8 +24,16 @@
     "notification",
     "electron"
   ],
-  "author": "Rollcall Radar Contributors",
-  "license": "MIT",
+  "author": "AlanQi1",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlanQi1/zju-rollcall-watch.git"
+  },
+  "homepage": "https://github.com/AlanQi1/zju-rollcall-watch#readme",
+  "bugs": {
+    "url": "https://github.com/AlanQi1/zju-rollcall-watch/issues"
+  },
   "devDependencies": {
     "electron": "^33.2.1",
     "electron-builder": "^26.18.0"
@@ -41,6 +49,7 @@
     },
     "files": [
       "package.json",
+      "LICENSE",
       "src/http.js",
       "src/zjuam.js",
       "src/courses.js",

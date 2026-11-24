@@ -87,8 +87,17 @@ ZJU_AUTO_ANSWER=true
 - **内存会话**：登录后的会话 Cookie 仅保存在进程内存中，不落盘、不输出日志。
 - **开源构建白名单**：`package.json` 中的 `build.files` 严格按白名单打包应用源码，确保生成的 `.exe` 不包含任何本地配置、日志或凭据。
 
-## 免责声明与许可
+## 致谢
 
-本项目仅供学习交流与课堂签到提醒辅助使用，自动签到功能默认关闭，请遵守学校及课程相关规定并自行承担使用风险。
+本项目的部分关键思路与点位数据参考自以下开源项目，特此致谢：
 
-基于 [MIT License](LICENSE) 开源。
+- **[ZJU-live-better](https://github.com/5dbwat4/ZJU-live-better)**（`GPL-3.0-only`）— 雷达点名内置的 12 个教学楼信标点位（`src/locations.js`）与基于距离回读的三点定位反推思路（`src/trilateration.js`）源自该项目。
+- **[login-zju](https://github.com/5dbwat4/login-zju)** — ZJUAM 统一身份认证（CAS）登录流程与 RSA 公钥加密细节的参考实现。
+
+## 开源协议与免责声明
+
+本项目采用 **[GNU General Public License v3.0 (GPL-3.0-only)](LICENSE)** 开源协议，Copyright (C) 2026 AlanQi1。
+
+因本项目的雷达点位数据与定位算法衍生自以 GPL-3.0 协议发布的 [ZJU-live-better](https://github.com/5dbwat4/ZJU-live-better)，遵循该协议的传染性（Copyleft）要求，本项目同样以 `GPL-3.0-only` 发布。任何修改与再分发（包括二进制可执行文件分发）均须遵循 GPL-3.0 条款、保留原版权与许可声明并提供对应源代码。
+
+本项目仅供学习交流与课堂签到提醒辅助使用，请勿用于任何商业用途；自动签到功能默认关闭，使用前请自行了解并遵守学校及课程相关规定，因使用本项目产生的一切后果由使用者自行承担。
