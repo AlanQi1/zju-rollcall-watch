@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>签到雷达</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="m12 12 6.5-6.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.75"/><circle cx="15" cy="17" r="2.75"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2.5a5.5 5.5 0 0 1 11 0V20M16 5.5a2.75 2.75 0 0 1 0 5.5M17.5 15a4.5 4.5 0 0 1 3.5 4.4V20"/></symbol>
+    <symbol id="i-log" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4.5L3 9m0-5v5h5M4 13a8 8 0 0 0 14.5 4.5L21 15m0 5v-5h-5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 5.5v13M15.5 5.5v13"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5.5 10.5 6.5L8 18.5Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-tray" viewBox="0 0 24 24"><path d="m4 5-2 12v3h20v-3L20 5ZM2 15h6l2 3h4l2-3h6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.75"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 1 0-13 0c0 5.4 6.5 11 6.5 11Z"/><circle cx="12" cy="10" r="2.25"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z"/><path d="M14 3.5v5h5"/></symbol>
+  </defs></svg>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-mark"><svg class="icon"><use href="#i-radar"/></svg></span>
+        <div class="brand-text">
+          <div class="brand-title">签到雷达 <span class="version-tag">v2.2</span></div>
+          <div class="brand-sub">学在浙大 · 课堂点名监控</div>
+        </div>
+      </div>
+
+      <div class="sidebar-live" id="sidebarLive">
+        <div class="sidebar-live-row">
+          <span class="live-indicator"><span class="status-dot" id="sideStatusDot"></span><span id="sideStatusText">连接中</span></span>
+          <span class="side-countdown" id="sideCountdown">—</span>
+        </div>
+        <div class="sidebar-live-sub" id="sideLiveSub">正在初始化监听服务</div>
+      </div>
+
+      <nav class="nav-list" aria-label="主导航" role="tablist">
+        <button class="nav-item active" id="nav-overview" data-tab="tab-overview" role="tab" aria-controls="tab-overview" aria-selected="true">
+          <svg class="icon"><use href="#i-radar"/></svg>
+          <span class="nav-label">监控台</span>
+          <span class="nav-badge" id="navActiveBadge" hidden>0</span>
+        </button>
+        <button class="nav-item" id="nav-settings" data-tab="tab-settings" role="tab" aria-controls="tab-settings" aria-selected="false" tabindex="-1">
+          <svg class="icon"><use href="#i-settings"/></svg>
+          <span class="nav-label">偏好设置</span>
+        </button>
+        <button class="nav-item" id="nav-accounts" data-tab="tab-accounts" role="tab" aria-controls="tab-accounts" aria-selected="false" tabindex="-1">
+          <svg class="icon"><use href="#i-users"/></svg>
+          <span class="nav-label">账号管理</span>
+          <span class="nav-badge muted" id="navAccountBadge">0</span>
+        </button>
+        <button class="nav-item" id="nav-logs" data-tab="tab-logs" role="tab" aria-controls="tab-logs" aria-selected="false" tabindex="-1">
+          <svg class="icon"><use href="#i-log"/></svg>
+          <span class="nav-label">运行日志</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-subtle sidebar-test-btn" id="btnTestPopup">
+          <svg class="icon"><use href="#i-bell"/></svg>
+          <span>测试弹窗提醒</span>
+        </button>
+        <p class="tray-hint"><svg class="icon"><use href="#i-tray"/></svg>关闭窗口后在托盘继续监听</p>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="titlebar">
+        <div class="titlebar-left">
+          <span class="titlebar-page" id="pageTitle">监控台</span>
+          <span class="status-pill" id="topStatusPill"><span class="status-dot"></span><span id="topStatusText">正在连接</span></span>
+        </div>
+        <div class="window-controls">
+          <button class="win-btn" id="btnWinMin" aria-label="最小化" title="最小化">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+          </button>
+          <button class="win-btn" id="btnWinMax" aria-label="最大化或还原" title="最大化或还原">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.8"/></svg>
+          </button>
+          <button class="win-btn win-close" id="btnWinClose" aria-label="收起到系统托盘，保持后台运行" title="收起到系统托盘，保持后台运行">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="error-banner" id="ipcError" role="alert" hidden>
+        <svg class="icon"><use href="#i-error"/></svg>
+        <span id="ipcErrorText"></span>
+        <button id="btnRetry" class="text-button">重新连接</button>
+      </div>
+
+      <main class="content-panel">
+        <section class="tab-pane" id="tab-overview" role="tabpanel" aria-labelledby="nav-overview">
+          <div class="card hero-card" id="heroCard">
+            <div class="hero-main">
+              <div class="hero-copy">
+                <div class="hero-meta-row">
+                  <span class="hero-kicker" id="heroBadge">正在读取监听状态</span>
+                  <span class="mode-chip" id="autoModeStatus" role="status">读取中</span>
+                </div>
+                <h1 id="heroTitle">正在连接签到监控服务</h1>
+                <p id="heroDescription">正在同步账号会话与自动签到配置。</p>
+                <p id="autoOverviewError" class="inline-error" role="alert" hidden></p>
+                <div class="hero-actions">
+                  <button class="btn btn-primary" id="btnHeroAddAccount" hidden>
+                    <svg class="icon"><use href="#i-plus"/></svg>
+                    <span>添加账号</span>
+                  </button>
+                  <button class="btn btn-primary" id="btnCheckNow">
+                    <svg class="icon"><use href="#i-refresh"/></svg>
+                    <span id="checkLabel">立即检查</span>
+                  </button>
+                  <button class="btn btn-secondary" id="btnToggleWatch">
+                    <svg class="icon"><use id="toggleIcon" href="#i-pause"/></svg>
+                    <span id="toggleLabel">暂停监听</span>
+                  </button>
+                </div>
+              </div>
+              <div class="radar-widget">
+                <div class="radar-ring-wrap" aria-hidden="true">
+                  <span class="radar-ring ring-outer"></span>
+                  <span class="radar-ring ring-inner"></span>
+                  <span class="radar-sweep"></span>
+                </div>
+                <div class="radar-readout">
+                  <span class="radar-label">下一轮检查</span>
+                  <strong id="nextCountdown">—</strong>
+                  <span class="radar-interval" id="valInterval">等待连接</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-footer">
+              <span><svg class="icon"><use href="#i-clock"/></svg><span id="lastCheckTimeText">尚未检查</span></span>
+              <span id="lastSuccessText">尚无成功检查记录</span>
+            </div>
+          </div>
+
+          <article class="card rollcalls-card">
+            <div class="card-header">
+              <h2>当前进行中的签到 <span class="count-badge" id="activeBadge">0</span></h2>
+              <span class="small-muted" id="rollcallHint">等待实时状态</span>
+            </div>
+            <div id="rollcallContainer" class="rollcall-container">
+              <div class="empty-state">
+                <span class="empty-icon"><svg class="icon"><use href="#i-radar"/></svg></span>
+                <h3>正在读取当前签到</h3>
+                <p>完成检查后，发现的雷达/数字/二维码签到将第一时间显示在这里。</p>
+              </div>
+            </div>
+          </article>
+
+          <div class="overview-grid">
+            <article class="card sessions-card">
+              <div class="card-header">
+                <h2>账号会话 <span class="count-badge" id="accountBadge">0</span></h2>
+                <div class="card-header-actions">
+                  <button class="text-button" id="btnQuickAddAccount"><svg class="icon"><use href="#i-plus"/></svg>添加账号</button>
+                  <button class="text-button" id="btnManageAccounts">管理 <span aria-hidden="true">→</span></button>
+                </div>
+              </div>
+              <div id="sessionSummary" class="session-summary">
+                <p class="small-muted">正在读取账号会话…</p>
+              </div>
+              <div id="monitorError" class="inline-error" role="status" hidden></div>
+            </article>
+
+            <article class="card auto-history-card">
+              <div class="card-header">
+                <h2>最近自动签到</h2>
+                <span class="small-muted">最近 15 条真实回读记录</span>
+              </div>
+              <div id="autoHistoryList" class="auto-history-list" role="list" aria-label="最近自动签到结果">
+                <p class="small-muted">正在读取自动签到记录…</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-settings" role="tabpanel" aria-labelledby="nav-settings" hidden>
+          <div class="section-header">
+            <div>
+              <h1>偏好设置</h1>
+              <p class="section-sub">配置自动签到策略、检查频率与系统提醒行为，更改即时生效。</p>
+            </div>
+            <span class="pill-note">自动保存</span>
+          </div>
+
+          <div class="card settings-card auto-settings-card" aria-labelledby="autoSettingsTitle">
+            <div class="settings-card-head">
+              <div>
+                <h2 id="autoSettingsTitle"><svg class="icon"><use href="#i-pin"/></svg>自动签到（雷达点名）</h2>
+                <p class="small-muted">默认关闭。仅雷达点名支持自动签到；数字点名、二维码签到仅弹窗提醒，请手动完成。</p>
+              </div>
+              <span class="mode-chip" id="autoSettingsStatus">等待配置</span>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-copy">
+                <label class="setting-title" for="setAutoAnswer">启用自动签到</label>
+                <p>总开关开启且处于「监听中」时，参与的账号会按点位自动提交雷达签到。</p>
+              </div>
+              <label class="switch"><input type="checkbox" id="setAutoAnswer" aria-describedby="autoLocationError"><span class="slider"></span></label>
+            </div>
+
+            <div class="setting-item location-setting">
+              <div class="setting-copy">
+                <label class="setting-title" for="setAutoDefaultLocation">全局默认点位</label>
+                <p id="autoLocationHint">选择预置教学楼点位，或输入 <code>经度,纬度</code>（WGS84）。账号单独点位优先。</p>
+              </div>
+              <input class="input-control location-input" id="setAutoDefaultLocation" list="locationOptions" placeholder="如：东一教学楼 或 120.089136,30.302331" autocomplete="off" aria-describedby="autoLocationHint autoLocationError">
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-copy">
+                <label class="setting-title" for="setAutoFallback">失败后尝试其它校园点位</label>
+                <p>默认关闭。开启后仅在平台返回距离信息时继续尝试其它点位和三点定位推算。</p>
+              </div>
+              <label class="switch"><input type="checkbox" id="setAutoFallback"><span class="slider"></span></label>
+            </div>
+
+            <div class="settings-alerts">
+              <p id="locationLoadError" class="inline-error" role="alert" hidden></p>
+              <p id="autoLocationError" class="inline-error" role="alert" hidden></p>
+              <p id="autoSettingsFeedback" class="small-muted settings-feedback" role="status"></p>
+            </div>
+          </div>
+
+          <div class="card settings-card">
+            <div class="settings-card-head">
+              <div>
+                <h2><svg class="icon"><use href="#i-bell"/></svg>监听与桌面通知</h2>
+                <p class="small-muted">自定义轮询间隔、弹窗停留与开机自启。</p>
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="setting-copy"><label class="setting-title" for="setNotify">桌面弹窗提醒</label><p>发现新签到或自动签到成功时，在屏幕右下角弹出置顶卡片。</p></div>
+              <label class="switch"><input type="checkbox" id="setNotify"><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-copy"><label class="setting-title" for="setNotifySound">播放提示音</label><p>新提醒出现时播放一声提示音。</p></div>
+              <label class="switch"><input type="checkbox" id="setNotifySound"><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-copy"><label class="setting-title" for="setIntervalSelect">检查间隔</label><p>间隔越短越早发现点名，推荐使用 30 秒。</p></div>
+              <select class="select-control" id="setIntervalSelect">
+                <option value="15000">15 秒</option>
+                <option value="30000">30 秒 · 推荐</option>
+                <option value="60000">60 秒</option>
+                <option value="120000">2 分钟</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <div class="setting-copy"><label class="setting-title" for="setNotifySeconds">弹窗停留时间</label><p>鼠标停留在弹窗卡片上时，倒计时会自动暂停。</p></div>
+              <select class="select-control" id="setNotifySeconds">
+                <option value="0">常驻 · 手动关闭</option>
+                <option value="10">10 秒</option>
+                <option value="20">20 秒</option>
+                <option value="30">30 秒</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <div class="setting-copy"><label class="setting-title" for="setAutostart">开机自动启动</label><p>登录 Windows 后自动在系统托盘静默运行。</p></div>
+              <label class="switch"><input type="checkbox" id="setAutostart"><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <p class="page-note"><svg class="icon"><use href="#i-check"/></svg><span id="settingsModeNote">正在读取签到模式；账号密码仅保存在本机 accounts.env，直连学在浙大。</span></p>
+        </section>
+
+        <section class="tab-pane" id="tab-accounts" role="tabpanel" aria-labelledby="nav-accounts" hidden>
+          <div class="section-header">
+            <div>
+              <h1>账号管理</h1>
+              <p class="section-sub">支持同时监听多个浙大账号，所有凭据仅以标准 .env 格式保存在本地。</p>
+            </div>
+            <button class="btn btn-primary" id="btnNewAccount">
+              <svg class="icon"><use href="#i-plus"/></svg>
+              <span>添加账号</span>
+            </button>
+          </div>
+
+          <div class="card accounts-card">
+            <div class="card-header">
+              <h2>已配置账号</h2>
+              <span class="source-badge" id="credSourceBadge">正在读取来源</span>
+            </div>
+            <div class="accounts-list" id="accountsListWrap">
+              <p class="small-muted">正在读取账号…</p>
+            </div>
+            <div class="account-help">
+              <span><svg class="icon"><use href="#i-file"/></svg>凭据仅保存在本机 <code>accounts.env</code>，不上传第三方服务器。</span>
+              <div class="button-group">
+                <button id="btnOpenEnvFile" class="text-button">打开 accounts.env<svg class="icon"><use href="#i-arrow"/></svg></button>
+                <button id="btnOpenAccounts" class="text-button">打开配置目录<svg class="icon"><use href="#i-arrow"/></svg></button>
+              </div>
+            </div>
+          </div>
+
+          <form class="card account-form" id="accountForm" hidden autocomplete="off">
+            <div class="card-header">
+              <h2 id="accountFormTitle">添加账号</h2>
+              <button type="button" class="icon-button" id="btnCancelAccount" aria-label="关闭账号编辑">
+                <svg class="icon"><use href="#i-close"/></svg>
+              </button>
+            </div>
+            <input type="hidden" id="accountKey">
+            <div class="form-grid">
+              <label class="form-field">
+                <span>账号名称</span>
+                <input class="input-control" id="accountLabel" maxlength="40" placeholder="例如：我的主账号" required>
+              </label>
+              <label class="form-field">
+                <span>浙大学号</span>
+                <input class="input-control" id="accountUsername" inputmode="numeric" autocomplete="off" maxlength="40" placeholder="输入 6–20 位数字学号" required>
+              </label>
+              <label class="form-field password-field">
+                <span>ZJUAM 密码</span>
+                <div class="password-wrap">
+                  <input class="input-control" id="accountPassword" type="password" autocomplete="new-password" placeholder="输入统一身份认证密码" required>
+                  <button type="button" class="password-eye" id="btnTogglePassword" aria-label="显示或隐藏密码" title="显示或隐藏密码">
+                    <svg class="icon"><use href="#i-eye"/></svg>
+                  </button>
+                </div>
+              </label>
+              <label class="form-field" for="accountLocation">
+                <span>此账号专用点位（可选）</span>
+                <input class="input-control" id="accountLocation" list="locationOptions" autocomplete="off" placeholder="留空使用全局默认点位" aria-describedby="accountLocationHint accountFormError">
+              </label>
+            </div>
+
+            <div class="form-toggles">
+              <label class="toggle-row">
+                <span>启用此账号监听</span>
+                <span class="switch"><input id="accountEnabled" type="checkbox" checked><span class="slider"></span></span>
+              </label>
+              <label class="toggle-row">
+                <span>参与自动签到（总开关开启后生效）</span>
+                <span class="switch"><input id="accountAutoAnswer" type="checkbox" checked><span class="slider"></span></span>
+              </label>
+            </div>
+
+            <p class="small-muted" id="accountLocationHint">支持预置点位 ID / 名称或自定义经度,纬度；留空保存会清除此账号的位置覆盖。总开关关闭时仍可保存。</p>
+            <p class="small-muted" id="accountFormHint">账号与密码会保存到本机 accounts.env 文件中，仅用于直连登录学在浙大。</p>
+            <div class="form-footer">
+              <p id="accountFormError" class="field-error" role="alert"></p>
+              <div class="button-group">
+                <button class="btn btn-primary" id="btnSaveAccount" type="submit">保存到 accounts.env</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="tab-pane" id="tab-logs" role="tabpanel" aria-labelledby="nav-logs" hidden>
+          <div class="section-header">
+            <div>
+              <h1>运行日志</h1>
+              <p class="section-sub">实时记录账号会话、点名检查、弹窗提醒与自动签到状态（已自动脱敏）。</p>
+            </div>
+            <div class="button-group">
+              <button class="btn btn-secondary" id="btnClearLogs">清空显示</button>
+              <button class="btn btn-secondary" id="btnRefreshLogs"><svg class="icon"><use href="#i-refresh"/></svg>刷新日志</button>
+            </div>
+          </div>
+          <div class="card logs-card">
+            <div class="card-header">
+              <h2>实时事件流</h2>
+              <span class="small-muted">最新 300 条 · 自动更新</span>
+            </div>
+            <div id="terminalBox" class="log-list" role="log" aria-label="运行日志"></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <span><span class="footer-dot"></span><span id="footerMode">正在读取签到模式</span></span>
+        <span id="footerStatus">正在连接本地服务</span>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <datalist id="locationOptions"></datalist>
+  <script src="renderer.js"></script>
+</body>
+</html>

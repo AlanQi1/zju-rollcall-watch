@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>签到雷达 · 提醒</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body class="popup-body">
+  <div class="popup-stage">
+    <article class="popup-card" id="card" aria-labelledby="courseTitle">
+      <div class="popup-accent" aria-hidden="true"></div>
+      <header class="popup-header">
+        <div class="popup-brand">
+          <span class="popup-brand-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span>
+          <span class="popup-brand-name">签到雷达</span>
+          <span class="popup-badge" id="typeName">签到提醒</span>
+        </div>
+        <button id="btnClose" class="popup-close" aria-label="关闭提醒" title="关闭提醒">
+          <svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="popup-content">
+        <h1 id="courseTitle">正在载入提醒</h1>
+        <div class="popup-meta">
+          <span id="teacherName"></span>
+          <span id="accountBadge"></span>
+          <span id="startTime"></span>
+        </div>
+        <p class="popup-note" id="popupNote">请及时前往课程平台查看并完成签到。</p>
+        <p class="popup-error" id="popupError" role="alert" hidden></p>
+      </div>
+
+      <div class="popup-actions">
+        <button class="btn btn-primary" id="btnOpen">
+          <span id="openLabel">打开课程平台</span>
+          <svg class="icon" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </button>
+        <button class="btn btn-secondary" id="btnMain">主界面</button>
+        <button class="btn btn-secondary" id="btnDismiss">知道了</button>
+      </div>
+
+      <footer class="popup-footer">
+        <span id="timerLabel">保留至手动关闭</span>
+        <span id="popupMode">等待签到结果</span>
+      </footer>
+
+      <div class="popup-progress-track" id="progressTrack" hidden>
+        <div class="popup-progress" id="progressBar"></div>
+      </div>
+    </article>
+  </div>
+  <script src="popup-renderer.js"></script>
+</body>
+</html>

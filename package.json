@@ -1,0 +1,81 @@
+{
+  "name": "zju-rollcall-watch",
+  "version": "2.2.0",
+  "description": "签到雷达：学在浙大点名桌面监听、托盘常驻、玻璃弹窗提醒与可选雷达自动签到",
+  "type": "module",
+  "main": "src/electron/main.js",
+  "scripts": {
+    "start": "node scripts/launch.cjs",
+    "app": "node scripts/launch.cjs",
+    "check": "node index.js --check-once",
+    "test": "node --test tests/*.test.js",
+    "test:desktop": "node scripts/verify-portable.cjs --dev",
+    "test:exe": "node scripts/verify-portable.cjs",
+    "icon": "node scripts/generate-icon.mjs",
+    "build": "node scripts/build-exe.cjs",
+    "audit:release": "node scripts/audit-release.mjs"
+  },
+  "keywords": [
+    "zju",
+    "courses",
+    "rollcall",
+    "radar",
+    "attendance",
+    "notification",
+    "electron"
+  ],
+  "author": "Rollcall Radar Contributors",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "cn.zju.rollcall.watch",
+    "productName": "RollcallRadar",
+    "asar": true,
+    "compression": "maximum",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "package.json",
+      "src/http.js",
+      "src/zjuam.js",
+      "src/courses.js",
+      "src/accounts.js",
+      "src/config.js",
+      "src/watcher.js",
+      "src/auto-sign.js",
+      "src/locations.js",
+      "src/trilateration.js",
+      "src/electron/main.js",
+      "src/electron/preload.cjs",
+      "src/electron/popup-preload.cjs",
+      "src/electron/index.html",
+      "src/electron/index.css",
+      "src/electron/renderer.js",
+      "src/electron/popup.html",
+      "src/electron/popup-renderer.js",
+      "src/electron/self-test.js",
+      "src/electron/self-test-auto.js"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "RollcallRadar-${version}-Windows-x64.exe"
+    },
+    "portable": {
+      "requestExecutionLevel": "user"
+    }
+  }
+}

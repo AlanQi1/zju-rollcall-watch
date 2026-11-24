@@ -1,0 +1,31 @@
+# 依赖与构建产物
+node_modules/
+release/
+dist/
+out/
+
+# 本地配置、账号凭据与运行时数据（切勿提交到公开仓库！）
+.env
+.env.*
+!.env.example
+accounts.env
+accounts.json
+credentials.env
+config.json
+auto-sign.json
+reminded.json
+locations.json
+data/
+
+# 备份、日志与测试输出
+backup-*/
+*.log
+npm-debug.log*
+verification-*/
+*.png
+
+# 系统与编辑器文件
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
